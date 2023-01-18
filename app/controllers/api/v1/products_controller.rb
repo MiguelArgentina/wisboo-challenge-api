@@ -1,7 +1,11 @@
 class Api::V1::ProductsController < ApplicationController
   def index
-    @products = Product.all.limit(3)
-    render json: present_products(@products).as_json(page: product_params[:page])
+    query = product_params[:query]
+    currency = product_params[:currency]
+    page = product_params[:page].to_i
+    size = product_params[:size].to_i
+    @products = Product.search(query).filter_by_currency(currency).page(page, size).per(size)
+    render json: present_products(@products).as_json(page: page)
   end
 
   private
